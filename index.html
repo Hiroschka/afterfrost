@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Afterfrost – hardcore survival in a frozen city</title>
+<meta name="description" content="Afterfrost (working title): a hardcore first-person survival game in an abandoned, frozen city. Pre-alpha, solo-developed for PC.">
+<meta property="og:title" content="Afterfrost">
+<meta property="og:description" content="Hardcore first-person survival in an abandoned, frozen city. Pre-alpha, solo-developed for PC.">
+<meta property="og:image" content="img/hero.jpg">
+<meta name="theme-color" content="#0d141c">
+<link rel="icon" href="img/icon.png">
+<!-- VOR DEM START: Diese Zeile loeschen, damit Suchmaschinen die Seite finden. -->
+<meta name="robots" content="noindex">
+<!-- Keine externen Schriften, keine Tracker, keine Cookies: nichts wird von fremden Servern geladen. -->
+<style>
+  :root {
+    --bg: #0d141c;
+    --bg-2: #131d28;
+    --panel: #172331;
+    --line: #26384a;
+    --text: #e8eef4;
+    --muted: #9fb0c0;
+    --ice: #a9d4ee;
+    --accent: #e8a54a;   /* warmes Licht, Feuer */
+    --danger: #d9634f;
+    --display: "Bahnschrift", "DIN Alternate", "Arial Narrow", "Roboto Condensed", system-ui, sans-serif;
+    --body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 var(--body); }
+  a { color: var(--ice); }
+  img { max-width: 100%; display: block; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+  /* Sprache: nur die aktive Sprache anzeigen */
+  html[lang="de"] [lang="en"]:not(html) { display: none !important; }
+  html[lang="en"] [lang="de"]:not(html) { display: none !important; }
+
+  /* Kopfzeile */
+  header.top { position: absolute; inset: 0 0 auto 0; z-index: 5; }
+  header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .mark { font: 600 15px/1 var(--display); letter-spacing: .28em; text-transform: uppercase; color: var(--text); text-decoration: none; }
+  .langs button { background: none; border: 1px solid var(--line); color: var(--muted); font: 600 13px/1 var(--body); padding: 7px 10px; cursor: pointer; border-radius: 4px; }
+  .langs button[aria-pressed="true"] { color: var(--text); border-color: var(--ice); }
+
+  /* Hero */
+  .hero { position: relative; min-height: 92vh; display: flex; align-items: flex-end; overflow: hidden;
+          background: radial-gradient(120% 80% at 70% 10%, #2a4258 0%, #15212d 45%, var(--bg) 100%); }
+  .hero .bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: .85; }
+  .hero .bg::after { content: ""; position: absolute; inset: 0;
+          background: linear-gradient(180deg, rgba(13,20,28,.35) 0%, rgba(13,20,28,.15) 40%, rgba(13,20,28,.95) 100%); }
+  .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .hero .content { position: relative; z-index: 2; padding: 0 0 72px; width: 100%; }
+  .badge { display: inline-block; font: 600 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase;
+           color: var(--bg); background: var(--ice); padding: 6px 9px; border-radius: 3px; }
+  h1 { font: 700 clamp(52px, 11vw, 132px)/.9 var(--display); letter-spacing: .04em; text-transform: uppercase; margin: 18px 0 6px; }
+  .wt { color: var(--muted); font-size: 14px; letter-spacing: .06em; }
+  .tagline { font-size: clamp(19px, 2.4vw, 25px); max-width: 640px; margin: 18px 0 30px; color: #d6e2ec; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; font: 600 16px/1 var(--body); text-decoration: none; padding: 15px 20px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; }
+  .btn.primary { background: var(--accent); color: #1c1206; }
+  .btn.primary:hover { filter: brightness(1.08); }
+  .btn.ghost { border-color: var(--line); color: var(--text); background: rgba(13,20,28,.5); }
+  .btn.ghost:hover { border-color: var(--ice); }
+
+  /* Abschnitte */
+  section { padding: 84px 0; border-top: 1px solid var(--line); }
+  section.alt { background: var(--bg-2); }
+  .kicker { font: 600 13px/1 var(--body); letter-spacing: .18em; text-transform: uppercase; color: var(--ice); margin: 0 0 12px; }
+  h2 { font: 700 clamp(30px, 4.4vw, 46px)/1.05 var(--display); letter-spacing: .02em; text-transform: uppercase; margin: 0 0 18px; }
+  .lead { font-size: 19px; color: #cdd9e4; max-width: 720px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 36px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 22px; }
+  .card h3 { font: 700 20px/1.2 var(--display); letter-spacing: .03em; text-transform: uppercase; margin: 0 0 8px; }
+  .card p { margin: 0; color: var(--muted); font-size: 16px; }
+  .card .icon { width: 30px; height: 30px; margin-bottom: 14px; color: var(--ice); }
+
+  /* Galerie */
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-top: 32px; }
+  .shot { position: relative; aspect-ratio: 16/9; background: linear-gradient(160deg, #22364a, #121c26); border-radius: 6px; overflow: hidden; border: 1px solid var(--line); }
+  .shot img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; }
+  .shot .tag { z-index: 2; }
+  .shot .tag { position: absolute; left: 10px; bottom: 10px; font: 600 11px/1 var(--body); letter-spacing: .1em; text-transform: uppercase; background: rgba(13,20,28,.8); color: var(--text); padding: 5px 7px; border-radius: 3px; }
+  .shot .empty { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 14px; text-align: center; padding: 16px; }
+
+  /* Stand */
+  .status { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 32px; }
+  .status ul { list-style: none; padding: 0; margin: 0; }
+  .status li { padding: 10px 0 10px 28px; border-bottom: 1px solid var(--line); position: relative; color: #d3dee8; }
+  .status li::before { position: absolute; left: 0; top: 10px; font-weight: 700; }
+  .ok li::before { content: "✓"; color: #7fc79a; }
+  .todo li::before { content: "○"; color: var(--muted); }
+  .status h3 { font: 700 18px/1 var(--display); text-transform: uppercase; letter-spacing: .05em; margin: 0 0 6px; }
+
+  /* Newsletter */
+  .signup { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: start; }
+  form.nl { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 26px; }
+  form.nl label.field { display: block; font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+  form.nl input[type="email"] { width: 100%; font: 17px var(--body); padding: 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+  form.nl input[type="email"]:focus { outline: 2px solid var(--ice); outline-offset: 1px; }
+  .consent { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--muted); margin: 16px 0 18px; }
+  .consent input { margin-top: 4px; width: 18px; height: 18px; flex: none; }
+  form.nl .btn { width: 100%; justify-content: center; }
+  .fine { font-size: 13px; color: var(--muted); margin-top: 12px; }
+  .hp { position: absolute; left: -5000px; }
+
+  /* Devlog */
+  .posts { margin-top: 28px; border-top: 1px solid var(--line); }
+  .post { display: grid; grid-template-columns: 140px 1fr; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .post time { color: var(--muted); font-size: 15px; }
+  .post h3 { margin: 0 0 4px; font-size: 19px; }
+  .post p { margin: 0; color: var(--muted); }
+
+  /* KI */
+  .ai { background: var(--panel); border-left: 3px solid var(--ice); padding: 22px 24px; border-radius: 0 8px 8px 0; margin-top: 26px; max-width: 760px; color: #d3dee8; }
+
+  footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 28px; justify-content: space-between; }
+  footer nav a { margin-right: 18px; }
+
+  @media (max-width: 760px) {
+    .signup { grid-template-columns: 1fr; }
+    .post { grid-template-columns: 1fr; gap: 4px; }
+    section { padding: 64px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hero canvas { display: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     ANPASSEN (alles Wichtige steht hier oben im Kommentar):
+     1. NAME: "Afterfrost" kommt im Titel, im <h1> und im Footer vor.
+     2. DISCORD: href="#discord" bei den Discord-Buttons durch deinen Einladungslink ersetzen.
+     3. NEWSLETTER: action="NEWSLETTER-FORMULAR-URL" im <form> durch die Formular-Adresse
+        deines Anbieters ersetzen (siehe README.md). Feldname der E-Mail ggf. anpassen.
+     4. BILDER: img/hero.jpg und img/shot-1.jpg ... img/shot-3.jpg ablegen (1920x1080 JPG).
+     5. IMPRESSUM/DATENSCHUTZ: impressum.html und datenschutz.html ausfüllen.
+     ============================================================ -->
+
+<header class="top">
+  <div class="wrap">
+    <a class="mark" href="#">Afterfrost</a>
+    <div class="langs" role="group" aria-label="Sprache / Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="de" aria-pressed="false">DE</button>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="bg" id="heroBg"></div>
+  <canvas id="snow" aria-hidden="true"></canvas>
+  <div class="content">
+    <div class="wrap">
+      <span class="badge" lang="de">Pre-Alpha · In-Engine</span>
+      <span class="badge" lang="en">Pre-alpha · In-engine</span>
+      <h1>Afterfrost</h1>
+      <div class="wt" lang="de">Arbeitstitel · PC · in Entwicklung</div>
+      <div class="wt" lang="en">Working title · PC · in development</div>
+      <p class="tagline" lang="de">Ein kompromissloses Survival-Spiel aus der Ego-Perspektive. Eine verlassene, eingefrorene Großstadt. Kälte, Hunger und Infizierte sind deine Gegner – andere Überlebende vielleicht auch.</p>
+      <p class="tagline" lang="en">An uncompromising first-person survival game. An abandoned, frozen city. Cold, hunger and the infected are out to get you – and other survivors might be too.</p>
+      <div class="cta">
+        <a class="btn primary" href="#newsletter"><span lang="de">Updates per E-Mail</span><span lang="en">Get updates by email</span></a>
+        <a class="btn ghost" href="#discord" data-discord><span lang="de">Discord beitreten</span><span lang="en">Join the Discord</span></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="spiel">
+  <div class="wrap">
+    <p class="kicker" lang="de">Das Spiel</p><p class="kicker" lang="en">The game</p>
+    <h2 lang="de">Der Winter ist geblieben. Die Menschen nicht.</h2>
+    <h2 lang="en">The winter stayed. The people didn't.</h2>
+    <p class="lead" lang="de">Nach einer Pandemie liegt eine an Manhattan angelehnte Großstadt verlassen unter Schnee und Eis. Du überlebst ausschließlich aus der Ego-Perspektive: Wärme, Nahrung und Wasser finden, Wunden versorgen, trocken bleiben. Der Tod ist endgültig.</p>
+    <p class="lead" lang="en">After a pandemic, a city inspired by Manhattan lies deserted under snow and ice. You survive strictly in first person: find warmth, food and water, treat your wounds, stay dry. Death is permanent.</p>
+
+    <div class="grid">
+      <div class="card">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2v20M4.9 6l14.2 12M4.9 18L19.1 6M9 3.5l3 2.5 3-2.5M9 20.5l3-2.5 3 2.5"/></svg>
+        <h3 lang="de">Kälte und Nässe</h3><h3 lang="en">Cold and wet</h3>
+        <p lang="de">Körpertemperatur ist das zentrale System. Schnee macht nass, Nässe macht kalt – Kleidung, Unterschlupf und Feuer entscheiden.</p>
+        <p lang="en">Body temperature is the core system. Snow gets you wet, wet makes you cold – clothing, shelter and fire decide.</p>
+      </div>
+      <div class="card">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>
+        <h3 lang="de">Verletzungen</h3><h3 lang="en">Injuries</h3>
+        <p lang="de">Blutungen, Knochenbrüche, Erschöpfung. Ein gebrochenes Bein verändert jede Flucht – bis du es schienst.</p>
+        <p lang="en">Bleeding, broken bones, exhaustion. A broken leg changes every escape – until you splint it.</p>
+      </div>
+      <div class="card">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20l7-7M14 4l6 6-8 8-6-6z"/></svg>
+        <h3 lang="de">Aus Fundstücken</h3><h3 lang="en">Scavenge and craft</h3>
+        <p lang="de">Aus einem T-Shirt werden Verbände, aus Ästen eine Schiene. Was du brauchst, findest oder baust du.</p>
+        <p lang="en">A T-shirt becomes bandages, sticks become a splint. What you need, you find or make.</p>
+      </div>
+      <div class="card">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+        <h3 lang="de">Infizierte und andere</h3><h3 lang="en">Infected and others</h3>
+        <p lang="de">Infizierte reagieren auf Lärm. Andere Spieler können Verbündete sein – oder die größere Gefahr.</p>
+        <p lang="en">The infected react to noise. Other players can be allies – or the bigger threat.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="bilder">
+  <div class="wrap">
+    <p class="kicker" lang="de">Bilder</p><p class="kicker" lang="en">Screenshots</p>
+    <h2 lang="de">Aus dem aktuellen Stand</h2><h2 lang="en">From the current build</h2>
+    <div class="gallery">
+      <figure class="shot" style="margin:0"><img src="img/shot-1.jpg" alt="" onerror="this.remove()"><div class="empty">img/shot-1.jpg</div><span class="tag">Pre-Alpha · In-Engine</span></figure>
+      <figure class="shot" style="margin:0"><img src="img/shot-2.jpg" alt="" onerror="this.remove()"><div class="empty">img/shot-2.jpg</div><span class="tag">Pre-Alpha · In-Engine</span></figure>
+      <figure class="shot" style="margin:0"><img src="img/shot-3.jpg" alt="" onerror="this.remove()"><div class="empty">img/shot-3.jpg</div><span class="tag">Pre-Alpha · In-Engine</span></figure>
+    </div>
+  </div>
+</section>
+
+<section id="stand">
+  <div class="wrap">
+    <p class="kicker" lang="de">Ehrlicher Stand</p><p class="kicker" lang="en">Honest status</p>
+    <h2 lang="de">Was läuft, was fehlt</h2><h2 lang="en">What works, what's missing</h2>
+    <p class="lead" lang="de">Afterfrost ist in einer frühen Pre-Alpha. Hier steht, was schon im Test läuft und was noch fehlt – ohne Versprechen.</p>
+    <p class="lead" lang="en">Afterfrost is in early pre-alpha. This is what already works in testing and what is still missing – no promises.</p>
+    <div class="status">
+      <div class="ok">
+        <h3 lang="de">Läuft im Test</h3><h3 lang="en">Working in tests</h3>
+        <ul lang="de">
+          <li>Mehrspieler mit Server, der alles entscheidet</li>
+          <li>Wetter mit Tag und Nacht, vom Server gesteuert</li>
+          <li>Körpertemperatur, Nässe, Hunger, Durst</li>
+          <li>Knochenbrüche, Schiene und Verband</li>
+          <li>Herstellen einfacher Gegenstände</li>
+        </ul>
+        <ul lang="en">
+          <li>Multiplayer with a server that decides everything</li>
+          <li>Weather with day and night, run by the server</li>
+          <li>Body temperature, wetness, hunger, thirst</li>
+          <li>Broken bones, splints and bandages</li>
+          <li>Crafting simple items</li>
+        </ul>
+      </div>
+      <div class="todo">
+        <h3 lang="de">Fehlt noch</h3><h3 lang="en">Still missing</h3>
+        <ul lang="de">
+          <li>Echte Charaktermodelle (derzeit Platzhalter)</li>
+          <li>Eingerichtete Innenräume in größerem Umfang</li>
+          <li>Sound und Musik</li>
+          <li>Ein spielbarer Testzugang</li>
+        </ul>
+        <ul lang="en">
+          <li>Proper character models (placeholders for now)</li>
+          <li>Furnished interiors at scale</li>
+          <li>Sound and music</li>
+          <li>A playable test build</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="newsletter">
+  <div class="wrap signup">
+    <div>
+      <p class="kicker">Newsletter</p>
+      <h2 lang="de">Einmal im Monat, nicht öfter</h2><h2 lang="en">Once a month, no more</h2>
+      <p class="lead" lang="de">Devlogs, neue Bilder und als Erste die Nachricht, wenn es einen Playtest gibt. Keine Werbung für andere, Abmeldung jederzeit.</p>
+      <p class="lead" lang="en">Devlogs, new screenshots, and first word when there's a playtest. No third-party ads, unsubscribe any time.</p>
+      <p style="margin-top:22px"><a class="btn ghost" href="#discord" data-discord><span lang="de">Lieber Discord? Hier entlang</span><span lang="en">Prefer Discord? This way</span></a></p>
+    </div>
+    <!-- action durch die Formular-URL deines Newsletter-Anbieters ersetzen (README.md) -->
+    <form class="nl" action="NEWSLETTER-FORMULAR-URL" method="post" target="_blank">
+      <label class="field" for="email"><span lang="de">E-Mail-Adresse</span><span lang="en">Email address</span></label>
+      <input id="email" type="email" name="email" required autocomplete="email" placeholder="name@example.com">
+      <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <label class="consent">
+        <input type="checkbox" required>
+        <span lang="de">Ich möchte den Newsletter zu Afterfrost erhalten. Ich bestätige meine Anmeldung per Link in einer E-Mail und kann mich jederzeit abmelden. Details in der <a href="datenschutz.html">Datenschutzerklärung</a>.</span>
+        <span lang="en">I'd like to receive the Afterfrost newsletter. I'll confirm via a link in an email and can unsubscribe at any time. Details in the <a href="datenschutz.html">privacy policy</a>.</span>
+      </label>
+      <button class="btn primary" type="submit"><span lang="de">Anmelden</span><span lang="en">Subscribe</span></button>
+      <p class="fine" lang="de">Du bekommst zuerst eine Bestätigungs-E-Mail (Double-Opt-in).</p>
+      <p class="fine" lang="en">You'll get a confirmation email first (double opt-in).</p>
+    </form>
+  </div>
+</section>
+
+<section id="devlog">
+  <div class="wrap">
+    <p class="kicker">Devlog</p>
+    <h2 lang="de">Alle zwei Wochen</h2><h2 lang="en">Every two weeks</h2>
+    <div class="posts">
+      <!-- Neuen Eintrag oben einfügen. Jeder Devlog kann eine eigene Seite devlog/01.html sein. -->
+      <article class="post">
+        <time datetime="2026-11-24">24.11.2026</time>
+        <div>
+          <h3 lang="de">Devlog #1: Was ist Afterfrost?</h3><h3 lang="en">Devlog #1: What is Afterfrost?</h3>
+          <p lang="de">Wer dahinter steckt, was schon läuft, was noch fehlt – und wie ich KI-Werkzeuge einsetze. Erscheint am 24.11.</p>
+          <p lang="en">Who's behind it, what works, what's missing – and how I use AI tools. Out on 24 November.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="ki">
+  <div class="wrap">
+    <p class="kicker" lang="de">Transparenz</p><p class="kicker" lang="en">Transparency</p>
+    <h2 lang="de">Ein Mensch, ein paar Werkzeuge</h2><h2 lang="en">One person, some tools</h2>
+    <div class="ai" lang="de">Afterfrost ist ein Ein-Personen-Projekt. Ich nutze KI-Assistenten (Claude) für Programmierung, Werkzeuge, Dokumentation und das Bauen einfacher 3D-Requisiten nach meinen Vorgaben. Spieldesign, Weltgestaltung und jede Entscheidung liegen bei mir.</div>
+    <div class="ai" lang="en">Afterfrost is a one-person project. I use AI assistants (Claude) for programming, tools, documentation and building simple 3D props to my specifications. Game design, world design and every decision are mine.</div>
+  </div>
+</section>
+
+<section id="discord" style="text-align:center">
+  <div class="wrap">
+    <h2 lang="de">Komm in den Discord</h2><h2 lang="en">Join the Discord</h2>
+    <p class="lead" lang="de" style="margin:0 auto 26px">Fragen stellen, Feedback geben, beim Playtest dabei sein, sobald es einen gibt.</p>
+    <p class="lead" lang="en" style="margin:0 auto 26px">Ask questions, give feedback, be there when the first playtest happens.</p>
+    <!-- href durch deinen Discord-Einladungslink ersetzen, z. B. https://discord.gg/abc123 -->
+    <a class="btn primary" href="#discord" data-discord><span lang="de">Discord beitreten</span><span lang="en">Join the Discord</span></a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 Afterfrost · <span lang="de">Arbeitstitel · alle Bilder Pre-Alpha, In-Engine</span><span lang="en">Working title · all images pre-alpha, in-engine</span></div>
+    <nav><a href="impressum.html">Impressum</a><a href="datenschutz.html"><span lang="de">Datenschutz</span><span lang="en">Privacy</span></a></nav>
+  </div>
+</footer>
+
+<script>
+  // ---- Discord-Link an EINER Stelle setzen ----
+  var DISCORD_INVITE = ""; // z. B. "https://discord.gg/abc123"
+  if (DISCORD_INVITE) document.querySelectorAll("[data-discord]").forEach(function (a) { a.href = DISCORD_INVITE; a.target = "_blank"; a.rel = "noopener"; });
+
+  // ---- Sprache ----
+  function setLang(l) {
+    document.documentElement.lang = l;
+    document.querySelectorAll(".langs button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.lang === l); });
+  }
+  setLang("en"); // Englisch zuerst, Deutsch per Umschalter
+  document.querySelectorAll(".langs button").forEach(function (b) { b.addEventListener("click", function () { setLang(b.dataset.lang); }); });
+
+  // ---- Titelbild, falls vorhanden ----
+  (function () { var i = new Image(); i.onload = function () { document.getElementById("heroBg").style.backgroundImage = "url(img/hero.jpg)"; }; i.src = "img/hero.jpg"; })();
+
+  // ---- Schneefall (leicht, ohne Bibliothek) ----
+  (function () {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var c = document.getElementById("snow"), x = c.getContext("2d"), flakes = [], w, h, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    function size() { w = c.clientWidth; h = c.clientHeight; c.width = w * dpr; c.height = h * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    size(); window.addEventListener("resize", size);
+    var n = Math.min(260, Math.round(w * h / 6000));
+    for (var k = 0; k < n; k++) flakes.push({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.8 + .4, s: Math.random() * .8 + .35, d: Math.random() * 6.28 });
+    var wind = .6, t = 0;
+    (function tick() {
+      t += .005; x.clearRect(0, 0, w, h); x.fillStyle = "rgba(235,243,250,.85)"; x.beginPath();
+      for (var k = 0; k < flakes.length; k++) {
+        var f = flakes[k];
+        f.y += f.s * (1 + f.r * .4); f.x += wind * (.6 + Math.sin(t + f.d)) * f.r * .5;
+        if (f.y > h + 4) { f.y = -4; f.x = Math.random() * w; }
+        if (f.x > w + 4) f.x = -4;
+        x.moveTo(f.x, f.y); x.arc(f.x, f.y, f.r, 0, 6.283);
+      }
+      x.fill(); requestAnimationFrame(tick);
+    })();
+  })();
+</script>
+</body>
+</html>

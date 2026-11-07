@@ -1,0 +1,6 @@
+# Vor dem Start: Suchmaschinen aussperren.
+# Zum Start diese Datei ersetzen durch:
+#   User-agent: *
+#   Allow: /
+User-agent: *
+Disallow: /
