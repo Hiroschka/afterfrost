@@ -134,11 +134,10 @@
 <!-- ============================================================
      ANPASSEN (alles Wichtige steht hier oben im Kommentar):
      1. NAME: "Afterfrost" kommt im Titel, im <h1> und im Footer vor.
-     2. DISCORD: href="#discord" bei den Discord-Buttons durch deinen Einladungslink ersetzen.
-     3. NEWSLETTER: action="NEWSLETTER-FORMULAR-URL" im <form> durch die Formular-Adresse
-        deines Anbieters ersetzen (siehe README.md). Feldname der E-Mail ggf. anpassen.
-     4. BILDER: img/hero.jpg und img/shot-1.jpg ... img/shot-3.jpg ablegen (1920x1080 JPG).
-     5. IMPRESSUM/DATENSCHUTZ: impressum.html und datenschutz.html ausfüllen.
+     2. DISCORD: erledigt (DISCORD_INVITE weiter unten im <script> gesetzt).
+     3. NEWSLETTER: erledigt (MailerLite-Formular "AfterFrost Newsletter" eingetragen).
+     4. BILDER: img/hero.jpg und img/shot-1.jpg ... img/shot-3.jpg ablegen (1920x1080 JPG) – noch offen.
+     5. IMPRESSUM/DATENSCHUTZ: Grundgerüst steht, Name/Anschrift/E-Mail noch offen.
      ============================================================ -->
 
 <header class="top">
@@ -272,10 +271,12 @@
       <p class="lead" lang="en">Devlogs, new screenshots, and first word when there's a playtest. No third-party ads, unsubscribe any time.</p>
       <p style="margin-top:22px"><a class="btn ghost" href="#discord" data-discord><span lang="de">Lieber Discord? Hier entlang</span><span lang="en">Prefer Discord? This way</span></a></p>
     </div>
-    <!-- action durch die Formular-URL deines Newsletter-Anbieters ersetzen (README.md) -->
-    <form class="nl" action="NEWSLETTER-FORMULAR-URL" method="post" target="_blank">
+    <!-- MailerLite-Formular "AfterFrost Newsletter" -->
+    <form class="nl" action="https://assets.mailerlite.com/jsonp/2778003/forms/203525954614593340/subscribe" method="post" target="_blank">
       <label class="field" for="email"><span lang="de">E-Mail-Adresse</span><span lang="en">Email address</span></label>
-      <input id="email" type="email" name="email" required autocomplete="email" placeholder="name@example.com">
+      <input id="email" type="email" name="fields[email]" required autocomplete="email" placeholder="name@example.com">
+      <input type="hidden" name="ml-submit" value="1">
+      <input type="hidden" name="anticsrf" value="true">
       <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
       <label class="consent">
         <input type="checkbox" required>
