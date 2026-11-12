@@ -1,4 +1,4 @@
-# Landingpage Afterfrost – vorbereitet für GitHub Pages, noch nicht veröffentlicht
+# Landingpage AfterFrost – vorbereitet für GitHub Pages, noch nicht veröffentlicht
 
 Der Ordner ist fertig für GitHub Pages, aber auf „nicht öffentlich“ gestellt:
 - `robots.txt` und `<meta name="robots" content="noindex">` halten Suchmaschinen fern.
@@ -27,7 +27,7 @@ Ausfüllen (direkt auf GitHub mit dem Stift-Symbol oder lokal):
 - `index.html`: unten `var DISCORD_INVITE = "";` und im Formular `action="NEWSLETTER-FORMULAR-URL"`.
 - `impressum.html`, `datenschutz.html`.
 - Bilder nach `img/` (siehe `img/LIESMICH.txt`).
-- Name tauschen, falls nicht Afterfrost: Suchen & Ersetzen in allen HTML-Dateien.
+- Name tauschen, falls nicht AfterFrost: Suchen & Ersetzen in allen HTML-Dateien.
 
 Lokal ansehen: `index.html` doppelklicken. Prüfen: PowerShell im Ordner → `.\Pruefen.ps1`.
 
