@@ -297,11 +297,11 @@
     <div class="posts">
       <!-- Neuen Eintrag oben einfügen. Jeder Devlog kann eine eigene Seite devlog/01.html sein. -->
       <article class="post">
-        <time datetime="2026-11-24">24.11.2026</time>
+        <time datetime="2026-11-21"><span lang="de">21.11.2026</span><span lang="en">21 Nov 2026</span></time>
         <div>
-          <h3 lang="de">Devlog #1: Was ist AfterFrost?</h3><h3 lang="en">Devlog #1: What is AfterFrost?</h3>
-          <p lang="de">Wer dahinter steckt, was schon läuft, was noch fehlt – und wie ich KI-Werkzeuge einsetze. Erscheint am 24.11.</p>
-          <p lang="en">Who's behind it, what works, what's missing – and how I use AI tools. Out on 24 November.</p>
+          <h3 lang="de"><a href="devlog-1.html?lang=de">Devlog #1: Kein Weg hinaus – So entsteht die Insel</a></h3><h3 lang="en"><a href="devlog-1.html">Devlog #1: No Way Off – Designing the Island</a></h3>
+          <p lang="de">Warum die Insel lang und schmal ist, drei Wege mit drei Risiken – und was heute schon steht. Konzept, nicht final.</p>
+          <p lang="en">Why the island is long and narrow, three routes with three risks – and what exists today. Concept, not final.</p>
         </div>
       </article>
     </div>
@@ -344,7 +344,7 @@
     document.documentElement.lang = l;
     document.querySelectorAll(".langs button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.lang === l); });
   }
-  setLang("en"); // Englisch zuerst, Deutsch per Umschalter
+  setLang(/[?&]lang=de\b/.test(location.search) ? "de" : "en"); // Englisch zuerst, Deutsch per Umschalter (oder ?lang=de)
   document.querySelectorAll(".langs button").forEach(function (b) { b.addEventListener("click", function () { setLang(b.dataset.lang); }); });
 
   // ---- Titelbild, falls vorhanden ----
